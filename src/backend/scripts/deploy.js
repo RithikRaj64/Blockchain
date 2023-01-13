@@ -6,10 +6,13 @@ async function main() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   // deploy contracts here:
-  
-  
+  const Test = await ethers.getContractFactory("Test");
+  const con = await Test.deploy();
+
+  console.log("Contract address : ", con.address);
+
   // For each contract, pass the deployed contract and name to this function to save a copy of the contract ABI and address to the front end.
-  saveFrontendFiles();
+  saveFrontendFiles(con, "Test");
 }
 
 function saveFrontendFiles(contract, name) {
