@@ -1,12 +1,16 @@
 import { ethers } from 'ethers';
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import TestAddress from '../contractsData/Test-address.json';
+import TestAbi from '../contractsData/Test.json';
 
 function App() {
 
   const [account, setAccount] = useState(null);
   const [balance, setBalance] = useState("");
   const [conn, setConn] = useState(false);
+
+  const [test, setTest] = useState(null);
 
   const web3 = async () => {
     // Get the accounts given by the Metamask extension into the Browser Window Object
@@ -33,6 +37,17 @@ function App() {
 
     // Changing the account info
     setConn(true);
+
+    loadContracts(signer);
+  }
+
+  // Loading the contracts
+  const loadContracts = async (signer) => {
+    const Test = new ethers.Contract(TestAddress.address, TestAbi.abi, signer);
+    setTest(Test);
+
+    // Calling the functions in the contract
+    console.log((await test.test()).toString());
   }
 
   // useEffect(() => {
