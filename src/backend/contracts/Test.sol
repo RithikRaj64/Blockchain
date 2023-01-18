@@ -2,10 +2,6 @@
 pragma solidity ^0.8.10;
 
 contract Test {
-    function add(uint256 _x) external returns (uint256) {
-        return 100 + _x;
-    }
-
     uint64 public orderCount;
 
     struct Order {
@@ -13,17 +9,14 @@ contract Test {
         address producer;
         address holder;
         address consumer;
-        bool delivered;
         string status;
         string timestamp;
-        //      timestamp
     }
 
     Order[] public Orders;
 
     mapping(address => bool) isProducer;
     mapping(address => bool) isMiddleMan;
-    // mapping(uint64 => address) orderToConsumer;
     mapping(address => uint64[]) consumerToOrders;
 
     modifier ifProducer() {
@@ -52,24 +45,28 @@ contract Test {
         isMiddleMan[msg.sender] = true;
     }
 
-    function placeOrder(address _consumer, string memory _timestamp)
-        external
-        ifProducer
-    {
+    function placeOrder(address _producer, string memory _timestamp) external {
         orderCount++;
         Orders.push(
             Order(
                 orderCount,
+                _producer,
+                address(0),
                 msg.sender,
-                msg.sender,
-                _consumer,
-                false,
-                "Order Accepted",
+                "Placed Order",
                 _timestamp
             )
         );
-        // orderToConsumer[orderCount] = _consumer;
-        consumerToOrders[_consumer].push(orderCount);
+    }
+
+    function acceptOrder(uint64 _id, string memory _timestamp)
+        external
+        ifProducer
+    {
+        _id--;
+        Orders[_id].holder = msg.sender;
+        Orders[_id].status = "Accepted Order";
+        Orders[_id].timestamp = _timestamp;
     }
 
     function passOrder(uint64 _id, string memory _timestamp)
@@ -86,7 +83,6 @@ contract Test {
         _id--;
         require(msg.sender == Orders[_id].consumer);
 
-        Orders[_id].delivered = true;
         Orders[_id].status = "Order Has Been Delivered";
         Orders[_id].timestamp = _timestamp;
     }

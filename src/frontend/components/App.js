@@ -28,6 +28,7 @@ function App() {
     // send signed transactions to the Ethereum Network to execute state changing operations
 
     const signer = provider.getSigner();
+    console.log(signer);
 
     // Other way to get the account
     const account = await signer.getAddress();
@@ -62,8 +63,12 @@ function App() {
   };
 
   const place = async () => {
-    await test.placeOrder("0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", time());
+    await test.placeOrder("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", time());
   };
+
+  const accept = async () => {
+    await test.acceptOrder(1, time());
+  }
 
   const pass = async () => {
     await test.passOrder(1, time());
@@ -73,7 +78,7 @@ function App() {
     await test.deliveredOrder(1, time());
   };
 
-  const checkAccountType = asynca() => {
+  const checkAccountType = async () => {
     setPro(await test.Prod());
     setMid(await test.Mid());
   };
@@ -95,15 +100,12 @@ function App() {
       <h3>Producer : {pro ? "Yes" : "No"}</h3>
       <h3>MiddleMan : {mid ? "Yes" : "No"}</h3>
       <button onClick={place}>Place Order</button>
+      <button onClick={accept}>Accept Order</button>
       <button onClick={pass}>Pass Order</button>
       <button onClick={delivered}>Order delivered</button>
 
       <br />
-      {/* {pro ? (
-      ) : mid ? (
-      ) : (
-      )
-      } */}
+
       <div>{order === null ? <></> : <OrderDetails order={order} />}</div>
     </div>
   );
@@ -118,8 +120,8 @@ function OrderDetails(props) {
       <p>Producer Address : {order[1]}</p>
       <p>Holder Address : {order[2]}</p>
       <p>Consumer Address : {order[3]}</p>
-      <p>Order Status : {order[5]}</p>
-      <p>Timestamp : {order[6]}</p>
+      <p>Order Status : {order[4]}</p>
+      <p>Timestamp : {order[5]}</p>
     </>
   );
 }
